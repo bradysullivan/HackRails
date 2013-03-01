@@ -1,5 +1,27 @@
+require 'logger'
+require 'net/smtp'
+#require 'smtp_tls'
+require 'rubygems'
+
 @success = true
 @result = nil
+
+def alert_email( emails, command, result)
+	message = <<MESSAGE_END
+From: hackrails updater <hackrails.updater.noreply@gmail.com>
+To: #{emails.join(",")}
+Subject: Update Failure!!
+
+Fatal error while executing `#{command}` during update!
+Output:
+#{result}
+MESSAGE_END
+	smtp = Net::SMTP.new 'smtp.gmail.com', 587
+	smtp.enable_starttls
+	smtp.start(Socket.gethostname,"hackrails.updater.noreply@gmail.com","niggerfaggot",:login) do |server|
+   server.send_message message, "hackrails.updater.noreply@gmail.com", emails
+	end
+end
 
 def log_result(value, status, command)
 	logger = Logger.new("update_logs")
@@ -7,7 +29,7 @@ def log_result(value, status, command)
 	logger.close
 end
 
-def do_command(command)
+def do_command(command, exit_if_failed=true)
 	@result = `#{command} 2>&1`
 	while not $?.exited?
 	end
@@ -15,8 +37,8 @@ def do_command(command)
 		@success = false
 		log_result(@result, $?.exitstatus, command)
 		puts "Error running command `#{command}`. Check update_logs for more information"
-		alert_email ["fashizzlepop@gmail.com", "debus.phil@gmail.com"], command, @result
-		return false
+		alert_email ["brady.sullivan@iwsinc.com", "pdebus@iwsinc.com"], command, @result
+		return false if !exit_if_failed else exit
 	end
 	return true
 end
