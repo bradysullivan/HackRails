@@ -12,6 +12,7 @@ def do_command(command)
 	while not $?.exited?
 	end
 	if not $?.success?
+		@success = false
 		log_result(@result, $?.exitstatus, command)
 		puts "Error running command `#{command}`. Check update_logs for more information"
 		alert_email ["fashizzlepop@gmail.com", "debus.phil@gmail.com"], command, @result
@@ -25,9 +26,9 @@ def result_matches(regex)
 end
 
 while @success do
+	sleep 15 if @success
 	do_command "git pull"
 	next if result_matches(/Already up-to-date\./)
 	do_command "bundle exec rake db:migrate"
-	sleep 15 if @success
 end
 
