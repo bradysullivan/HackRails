@@ -1,6 +1,5 @@
 require 'logger'
 require 'net/smtp'
-#require 'smtp_tls'
 require 'rubygems'
 
 @success = true
@@ -19,7 +18,7 @@ MESSAGE_END
 	smtp = Net::SMTP.new 'smtp.gmail.com', 587
 	smtp.enable_starttls
 	smtp.start(Socket.gethostname,"hackrails.updater.noreply@gmail.com","niggerfaggot",:login) do |server|
-   server.send_message message, "hackrails.updater.noreply@gmail.com", emails
+    server.send_message message, "hackrails.updater.noreply@gmail.com", emails
 	end
 end
 
