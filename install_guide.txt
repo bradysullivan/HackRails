@@ -1,0 +1,11 @@
+When installing from a fresh ec2 ubuntu instance...
+
+1. nginx
+git
+rvm 
+  "\curl -L https://get.rvm.io | bash -s stable --ruby"
+  "source /home/ubuntu/.rvm/scripts/rvm"
+nodejs
+rubygems
+sudo gem install passenger
+
