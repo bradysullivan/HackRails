@@ -22,6 +22,8 @@ end
 
 gem 'jquery-rails'
 
+gem 'daemons'
+
 group :production do
   # MySQL or PostgreSQL?
 end

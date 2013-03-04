@@ -1,9 +1,7 @@
 require 'logger'
 require 'net/smtp'
 require 'rubygems'
-
-@success = true
-@result = nil
+require 'shell_commands'
 
 def alert_email( emails, command, result)
 	message = <<MESSAGE_END
@@ -28,28 +26,44 @@ def log_result(value, status, command)
 	logger.close
 end
 
-def do_command(command, exit_if_failed=true)
-	@result = `#{command} 2>&1`
-	while not $?.exited?
-	end
-	if not $?.success?
-		@success = false
-		log_result(@result, $?.exitstatus, command)
-		puts "Error running command `#{command}`. Check update_logs for more information"
-		alert_email ["brady.sullivan@iwsinc.com", "pdebus@iwsinc.com"], command, @result
-		return false if !exit_if_failed else exit
-	end
-	return true
+def error_proc(result, command)
+	log_result(result, $?.exitstatus, command)
+	puts "Error running command `#{command}`. Check update_logs for more information"
+	alert_email ["brady.sullivan@iwsinc.com", "pdebus@iwsinc.com"], command, result
+	exit
 end
 
-def result_matches(regex)
-	return !regex.match(@result).nil?
+def get_changed_files
+	do_command "git diff --name-status ORIG_HEAD.. | grep ^M | cut -f 2"
+	return split_result
 end
 
-while @success do
-	sleep 15 if @success
+def handle_changed_files(changed_files)
+	changed_files = get_changed_files if changed_files.nil?
+	changed_files.each do |file|
+		case file
+		when 'Gemfile'
+			do_command 'bundle install'
+		end
+	end
+end
+
+ShellCommands.default_proc = error_proc
+
+
+handle_changed_files if ARGV.include? '--changed_files'
+
+loop do
+	sleep 15
 	do_command "git pull"
 	next if result_matches(/Already up-to-date\./)
+	changed_files = get_changed_files
+	restart_script = true if changed_files.include? 'update_script.rb'
+	handle_changed_files(changed_files) if !restart_script
+	# Do things that need to be done before the script is restarted if it needs to be
 	do_command "bundle exec rake db:migrate"
+
+	# Restart the script if the script has changed
+	do_command 'ruby update_script_controller.rb restart -- --changed_files' if restart_script
 end
 
