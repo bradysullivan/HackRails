@@ -1,4 +1,4 @@
-require 'rubygems'        # if you use RubyGems
+require 'rubygems'  # if you use RubyGems
 require 'daemons'
 
 options = {
