@@ -1,7 +1,30 @@
 require 'logger'
 require 'net/smtp'
 require 'rubygems'
-require 'shell_commands'
+
+@last_result = nil
+@default_proc = nil
+
+def result_matches(regex)
+	return !regex.match(@last_result).nil? if regex.class = "Regex"
+	return !Regex.new(regex).match(@last_result).nil?
+end
+
+def do_command(command, &block)
+	@last_result = `#{command} 2>&1`
+	while not $?.exited? do
+	end
+	if $?.success?
+		block.call(@last_result, command) if !block.nil?
+	else
+		@default_proc.call(@last_result, command) if !@default_proc.nil?
+	end
+	return $?.success?
+end
+
+def split_result(char="\n")
+	return @last_result.split(char)
+end
 
 def alert_email( emails, command, result)
 	message = <<MESSAGE_END
@@ -27,6 +50,7 @@ def log_result(value, status, command)
 end
 
 def error_proc(result, command)
+	puts "penis"
 	log_result(result, $?.exitstatus, command)
 	puts "Error running command `#{command}`. Check update_logs for more information"
 	alert_email ["brady.sullivan@iwsinc.com", "pdebus@iwsinc.com"], command, result
@@ -48,8 +72,7 @@ def handle_changed_files(changed_files)
 	end
 end
 
-ShellCommands.default_proc = error_proc
-
+@default_proc = method(:error_proc)
 
 handle_changed_files if ARGV.include? '--changed_files'
 
