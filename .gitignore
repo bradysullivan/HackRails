@@ -17,5 +17,3 @@
 # Ignore update_logs
 /update_logs
 
-# Ignore Gemfile.lock, it should be changed automatically by running bundle install after the Gemfile is changed
-Gemfile.lock
