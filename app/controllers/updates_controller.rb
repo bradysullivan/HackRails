@@ -50,15 +50,16 @@ class UpdatesController < ApplicationController
       Update.error_proc({ result: "ILLEGAL IP OF #{request.remote_ip}", command: "WOOOOOOOO"})
       format.html { render action: "index", notice: '', status: 403 }
       format.json { render json: @updates, status: 403 }
-    end
-    @update.apply_update
-    respond_to do |format|
-      if @update.save
-        format.html { redirect_to @update, notice: 'Update was successfully created.' }
-        format.json { render json: @update, status: :created, location: @update }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @update.errors, status: :unprocessable_entity }
+    else
+      @update.apply_update
+      respond_to do |format|
+        if @update.save
+          format.html { redirect_to @update, notice: 'Update was successfully created.' }
+          format.json { render json: @update, status: :created, location: @update }
+        else
+          format.html { render action: "new" }
+          format.json { render json: @update.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
