@@ -41,11 +41,15 @@ class UpdatesController < ApplicationController
   # POST /updates.json
   def create
     push = JSON.parse(params[:payload])
-    @update = Update.new(push)
-    if !Update.ALLOWED_IPS.include?(request.remote_ip)
-      format.html { render nothing: true, status: 403 }
-      format.html { render nothing: true, status: 403 }
-    end
+    @update = Update.new
+    @update.after = push["after"]
+    @update.before = push["before"]
+    @update.commits = push["commits"]
+    @update.ref = push["ref"]
+    #if !Update.ALLOWED_IPS.include?(request.remote_ip)
+    #  format.html { render nothing: true, status: 403 }
+    #  format.html { render nothing: true, status: 403 }
+    #end
     @update.apply_update
     respond_to do |format|
       if @update.save
