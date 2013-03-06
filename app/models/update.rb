@@ -23,9 +23,9 @@ class Update < ActiveRecord::Base
     ActionMailer::Base.mail(:from => 'hackrails.updater.noreply@gmail.com', :to => emails, :subject => "Update Failure!!", :body => message).deliver
   end
 
-  def self.log_result(value, command)
+  def self.log_result(result)
     logger = Logger.new("update_logs")
-    logger.add(Logger::FATAL, value, command)
+    logger.add(Logger::FATAL, result["result"], result["command"])
     logger.close
   end
 
