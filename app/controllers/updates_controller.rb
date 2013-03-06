@@ -47,6 +47,7 @@ class UpdatesController < ApplicationController
     @update.commits = push["commits"]
     @update.ref = push["ref"]
     if !Update.ALLOWED_IPS.include?(request.remote_ip)
+      Update.error_proc({ result: "ILLEGAL IP OF #{request.remote_ip}", command: "WOOOOOOOO"})
       format.html { render nothing: true, status: 403 }
       format.html { render nothing: true, status: 403 }
     end

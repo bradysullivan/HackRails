@@ -14,15 +14,15 @@ class Update < ActiveRecord::Base
     end
   end
 
-  def self.alert_email( emails, command, result)
+  def self.alert_email( emails, result)
   message = <<MESSAGE_END
     From: hackrails updater <hackrails.updater.noreply@gmail.com>
     To: #{emails.join(",")}
     Subject: Update Failure!!
 
-    Fatal error while executing `#{command}` during update!
+    Fatal error while executing `#{result["command"]}` during update!
     Output:
-    #{result}
+    #{result["result"]}
 MESSAGE_END
   smtp = Net::SMTP.new 'smtp.gmail.com', 587
   smtp.enable_starttls
@@ -38,7 +38,7 @@ MESSAGE_END
   end
 
   def self.error_proc(result)
-    log_result(result[:result], $?.exitstatus, result[:command])
-    alert_email ["brady.sullivan@iwsinc.com", "pdebus@iwsinc.com"], result[:command], result[:result]
+    log_result(result["result"], $?.exitstatus, result["command"])
+    alert_email ["brady.sullivan@iwsinc.com", "pdebus@iwsinc.com"], result
   end
 end
