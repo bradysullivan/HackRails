@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Before:</b>
+  <%= @update.before %>
+</p>
+
+<p>
+  <b>After:</b>
+  <%= @update.after %>
+</p>
+
+<p>
+  <b>Commits:</b>
+  <%= @update.commits %>
+</p>
+
+<p>
+  <b>Ref:</b>
+  <%= @update.ref %>
+</p>
+
+
+<%= link_to 'Edit', edit_update_path(@update) %> |
+<%= link_to 'Back', updates_path %>
