@@ -24,7 +24,7 @@ end
 
 gem 'jquery-rails'
 
-gem 'shell_commands', '>= 1.0.1'
+gem 'shell_commands', '>= 1.1.0'
 
 # This comment was added so that I could make a frivilous push
 
