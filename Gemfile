@@ -22,7 +22,7 @@ end
 
 gem 'jquery-rails'
 
-gem 'daemons'
+gem 'shell_commands'
 
 group :production do
   # MySQL or PostgreSQL?
