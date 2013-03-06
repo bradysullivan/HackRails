@@ -50,7 +50,6 @@ def log_result(value, status, command)
 end
 
 def error_proc(result, command)
-	puts "penis"
 	log_result(result, $?.exitstatus, command)
 	puts "Error running command `#{command}`. Check update_logs for more information"
 	alert_email ["brady.sullivan@iwsinc.com", "pdebus@iwsinc.com"], command, result
@@ -70,6 +69,11 @@ def handle_changed_files(changed_files)
 			do_command 'bundle install'
 		end
 	end
+end
+
+@args = {}
+ARGV.each do |arg|
+	
 end
 
 @default_proc = method(:error_proc)
