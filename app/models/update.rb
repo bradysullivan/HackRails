@@ -26,9 +26,9 @@ class Update < ActiveRecord::Base
   end
 
   def self.log_result(result)
-    logger = Logger.new("update_logs")
-    logger.add(Logger::FATAL, result["result"], result["result"])
-    logger.close
+    update_logger = Logger.new("~./HackRails/log/update_logs")
+    update_logger.add(Logger::FATAL, result["result"], result["command"])
+    update_logger.close
   end
 
   def self.error_proc(result)
