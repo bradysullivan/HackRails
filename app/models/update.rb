@@ -19,18 +19,18 @@ class Update < ActiveRecord::Base
   end
 
   def self.alert_email( emails, result)
-    message = "Fatal error while executing `#{result["command"]}` during update!\nOutput:\n\t#{result["result"]}"
+    message = "Fatal error while executing `#{result[:command]}` during update!\nOutput:\n\t#{result[:result]}"
     ActionMailer::Base.mail(:from => 'hackrails.updater.noreply@gmail.com', :to => emails, :subject => "Update Failure!!", :body => message).deliver
   end
 
   def self.log_result(result)
     logger = Logger.new("update_logs")
-    logger.add(Logger::FATAL, result["result"], result["command"])
+    logger.add(Logger::FATAL, result[:result], result[:command])
     logger.close
   end
 
   def self.error_proc(result)
-    log_result(result["result"], result["command"])
+    log_result(result)
     alert_email ["brady.sullivan@iwsinc.com", "pdebus@iwsinc.com"], result
   end
 end
