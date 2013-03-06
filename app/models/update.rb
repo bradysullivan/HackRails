@@ -13,7 +13,9 @@ class Update < ActiveRecord::Base
       do_command "bundle exec rake db:migrate"
     rescue ShellCommandFailure => e
       Update.error_proc(e.result)
+      return false
     end
+    return true
   end
 
   def self.alert_email( emails, result)
