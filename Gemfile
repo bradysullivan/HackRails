@@ -24,7 +24,7 @@ end
 
 gem 'jquery-rails'
 
-gem 'shell_commands', '>= 1.1.1'
+gem 'shell_commands', '>= 1.1.2'
 
 group :production do
   # MySQL or PostgreSQL?
