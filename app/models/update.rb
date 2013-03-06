@@ -33,7 +33,7 @@ class Update < ActiveRecord::Base
   end
 
   def self.log_result(result)
-    update_logger = Logger.new("~./HackRails/log/update_logs")
+    update_logger = Logger.new("log/update_logs")
     update_logger.add(Logger::FATAL, result["result"], result["command"])
     update_logger.close
   end
