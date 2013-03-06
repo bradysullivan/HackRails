@@ -9,6 +9,7 @@ class Update < ActiveRecord::Base
   def apply_update
     begin
       do_command "git pull"
+      return true if result_matches(/Already up-to-date/)
       do_command "bundle install"
       do_command "bundle exec rake db:migrate"
     rescue ShellCommandFailure => e
