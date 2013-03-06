@@ -48,8 +48,8 @@ class UpdatesController < ApplicationController
     @update.ref = push["ref"]
     if !Update.allowed_ips.include?(request.remote_ip)
       Update.error_proc({ result: "ILLEGAL IP OF #{request.remote_ip}", command: "WOOOOOOOO"})
-      format.html { render nothing: true, status: 403 }
-      format.html { render nothing: true, status: 403 }
+      format.html { render action: "index", status: 403 }
+      format.json { render json: @updates, status: 403 }
     end
     @update.apply_update
     respond_to do |format|
