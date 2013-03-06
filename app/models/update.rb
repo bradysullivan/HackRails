@@ -12,7 +12,7 @@ class Update < ActiveRecord::Base
       return true if result_matches(/Already up-to-date/)
       do_command "bundle install"
       do_command "bundle exec rake db:migrate"
-      do_command "rvmsudo passenger stop -p 80 && rvmsudo passenger start -p 80 --user=ubuntu" if Rails.application.config.cache_classes
+      do_command "rvmsudo passenger stop -p 80 && rvmsudo passenger start -p 80 --user=ubuntu" if Rails.application.config.cache_classes  
     rescue ShellCommandFailure => e
       Update.error_proc(e.result)
       return false
