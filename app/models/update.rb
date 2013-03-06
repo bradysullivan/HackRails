@@ -35,14 +35,14 @@ MESSAGE_END
   end
   end
 
-  def self.log_result(value, status, command)
+  def self.log_result(value, command)
     logger = Logger.new("update_logs")
     logger.add(Logger::FATAL, value, command)
     logger.close
   end
 
   def self.error_proc(result)
-    log_result(result["result"], $?.exitstatus, result["command"])
+    log_result(result["result"], result["command"])
     alert_email ["brady.sullivan@iwsinc.com", "pdebus@iwsinc.com"], result
   end
 end
