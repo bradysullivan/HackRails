@@ -26,6 +26,8 @@ gem 'jquery-rails'
 
 gem 'shell_commands', '>= 1.0.1'
 
+# This comment was added so that I could make a frivilous push
+
 group :production do
   # MySQL or PostgreSQL?
 end
