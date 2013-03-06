@@ -19,20 +19,8 @@ class Update < ActiveRecord::Base
   end
 
   def self.alert_email( emails, result)
-  message = <<MESSAGE_END
-    From: hackrails updater <hackrails.updater.noreply@gmail.com>
-    To: #{emails.join(",")}
-    Subject: Update Failure!!
-
-    Fatal error while executing `#{result["command"]}` during update!
-    Output:
-    #{result["result"]}
-MESSAGE_END
-  smtp = Net::SMTP.new 'smtp.gmail.com', 587
-  smtp.enable_starttls
-  smtp.start(Socket.gethostname,"hackrails.updater.noreply@gmail.com","niggerfaggot",:login) do |server|
-    server.send_message message, "hackrails.updater.noreply@gmail.com", emails
-  end
+    message = "Fatal error while executing `#{result["command"]}` during update!\nOutput:\n\t#{result["result"]}"
+    ActionMailer::Base.mail(:from => 'hackrails.updater.noreply@gmail.com', :to => emails, :subject => "Update Failure!!", :body => message).deliver
   end
 
   def self.log_result(value, command)
