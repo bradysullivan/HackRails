@@ -17,5 +17,3 @@
 # Ignore update_logs
 /update_logs
 
-# Ignore Gemfile.lock
-Gemfile.lock
