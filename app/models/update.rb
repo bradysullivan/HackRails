@@ -7,16 +7,23 @@ class Update < ActiveRecord::Base
   end
 
   def apply_update
-    begin
-      do_command "git pull"
-      return true if result_matches(/Already up-to-date/)
-      do_command "bundle install"
-      do_command "bundle exec rake db:migrate"
-      do_command "rvmsudo passenger stop -p 80 && rvmsudo passenger start -d -p 80 --user=ubuntu" if Rails.application.config.cache_classes  
-    rescue ShellCommandFailure => e
-      Update.error_proc(e.result)
-      return false
+    modified_files = []
+    @commits.each do |commit|
+      modified_files += commit["modified"] if commit.has_key?("modified")
     end
+    Dir.chdir("/home/ubuntu/HackRails"){
+      begin
+        do_command "rm Gemfile.lock" if modified_files.include?("Gemfile")
+        do_command "git pull"
+        return true if result_matches(/Already up-to-date/)
+        do_command "bundle install" if modified_files.include?("Gemfile")
+        do_command "bundle exec rake db:migrate"
+        do_command "rvmsudo passenger stop -p 80 && rvmsudo passenger start -d -p 80 --user=ubuntu" if Rails.application.config.cache_classes  
+      rescue ShellCommandFailure => e
+        Update.error_proc(e.result)
+        return false
+      end
+    }
     return true
   end
 
