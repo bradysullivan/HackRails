@@ -3,7 +3,7 @@ class UpdatesController < ApplicationController
   # GET /updates.json
   def index
     @updates = Update.all
-
+    @commits = (@updates.collect {|update| update.commits }).reduce Hash.new, :merge
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @updates }
@@ -51,6 +51,7 @@ class UpdatesController < ApplicationController
       format.html { render action: "index", notice: '', status: 403 }
       format.json { render json: @updates, status: 403 }
     else
+      @update.commits = convert_commits @update.commits
       @update.apply_update
       respond_to do |format|
         if @update.save
@@ -90,5 +91,26 @@ class UpdatesController < ApplicationController
       format.html { redirect_to updates_url }
       format.json { head :no_content }
     end
+  end
+
+
+  def self.convert_commits(commits)
+    if commits.class.name == "Hash"
+      commits.each do |key, value|
+        commits[key].symbolize_keys!
+      end
+      return commits
+    end
+    hash = {}
+    commits.each do |commit|
+      id = commit["id"]
+      hash[id] = {"modified"=>[], "added"=>[], "removed"=>[], "parents"=>[]}.merge commit
+      if hash[id][parents].length == 0
+        do_command "git rev-list --parents -n 1 #{id}"
+        hash[id]["parents"] = ShellCommand.last_result[:result].split(' ')
+      end
+      hash[id].except!("id").symbolize_keys!
+    end
+    return hash
   end
 end
