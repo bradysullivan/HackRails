@@ -1,5 +1,18 @@
 <h1>Listing updates</h1>
-
+<table>
+  <% @commits.each do |id,commit| %>
+    <tr>
+      <td>
+        <%= commit[:parents].length.times.collect { '|' }.join('') %>
+      </td>
+      <td>
+        <%= id[0..7] %>
+      </td>
+      <td><%= commit[:message] %></td>
+    </tr>
+  <% end %>
+</table>
+<hr>
 <table>
   <tr>
     <th>Before</th>
@@ -10,12 +23,11 @@
     <th></th>
     <th></th>
   </tr>
-
 <% @updates.each do |update| %>
   <tr>
-    <td><%= update.before %></td>
-    <td><%= update.after %></td>
-    <td><%= update.commits %></td>
+    <td><%= update.before[0..7] %></td>
+    <td><%= update.after[0..7] %></td>
+    <td><%= update.commits.keys.collect {|key| key[0..7] } %></td>
     <td><%= update.ref %></td>
     <td><%= link_to 'Show', update %></td>
     <td><%= link_to 'Edit', edit_update_path(update) %></td>

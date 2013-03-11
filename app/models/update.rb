@@ -9,7 +9,7 @@ class Update < ActiveRecord::Base
   def apply_update
     modified_files = []
     self.commits.each do |commit|
-      modified_files += commit["modified"] if commit.has_key?("modified")
+      modified_files += commit[:modified] if commit.has_key?(:modified)
     end
     Dir.chdir("/home/ubuntu/HackRails"){
       begin
