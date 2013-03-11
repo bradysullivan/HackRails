@@ -97,7 +97,11 @@ class UpdatesController < ApplicationController
   def self.convert_commits(commits)
     if commits.class.name == "Hash"
       commits.each do |key, value|
-        commits[key].symbolize_keys!
+        value = {"modified"=>[], "added"=>[], "removed"=>[], "parents"=>[]}.merge value
+        value.symbolize_keys!
+        do_command "git rev-list --parents -n 1 #{key}"
+        value[:parents] = ShellCommand.last_result["result"].split(' ').collect { |val| val if val != key }.reject{|x| x == nil }
+        commits[key] = value  
       end
       return commits
     end
@@ -107,7 +111,7 @@ class UpdatesController < ApplicationController
       hash[id] = {"modified"=>[], "added"=>[], "removed"=>[], "parents"=>[]}.merge commit
       if hash[id][parents].length == 0
         do_command "git rev-list --parents -n 1 #{id}"
-        hash[id]["parents"] = ShellCommand.last_result[:result].split(' ')
+        hash[id]["parents"] = ShellCommand.last_result["result"].split(' ').collect { |val| val if val != id }.reject{|x| x == nil }
       end
       hash[id].except!("id").symbolize_keys!
     end
